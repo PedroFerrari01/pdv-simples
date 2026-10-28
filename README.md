@@ -1,65 +1,73 @@
-# PDV Simples | Sistema de Frente de Caixa e Vendas (CLI)
+# PDV Simples
 
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+Frente de caixa que roda no terminal: cadastro de produtos, carrinho, desconto, recibo, baixa automática do estoque e relatórios de vendas. Feito em Java puro, sem banco de dados: os dados ficam em arquivos `.csv`.
 
-Um sistema de Ponto de Venda ágil, construído inteiramente em Java puro, focado na simulação de um caixa comercial. O projeto garante precisão financeira e persistência leve operando 100% via terminal (linha de comando).
+![Java](https://img.shields.io/badge/Java_17+-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
 
-## 💡 Visão Geral do Produto
+<img src="docs/venda.png" alt="Uma venda completa no terminal: cadastro, carrinho, recibo com desconto e estoque atualizado" width="640">
 
-No varejo, a velocidade de atendimento e a exatidão financeira são inegociáveis. Sistemas lentos, complexos demais ou com arredondamentos incorretos geram filas e prejuízos no fechamento de caixa. O PDV Simples foi concebido para resolver essa dor estrutural, simulando o "motor" real de um caixa comercial rápido.
+## O que este projeto mostra
 
-Por rodar diretamente no terminal (CLI), a aplicação elimina a sobrecarga de interfaces gráficas pesadas, focando no que importa: processamento ágil. O sistema permite ao operador cadastrar produtos, montar um carrinho de compras, aplicar descontos percentuais e gerar um recibo detalhado. Tudo isso integrado a um sistema de estoque que realiza a baixa automática dos itens assim que a venda é finalizada, garantindo que o inventário esteja sempre atualizado.
+- **Dinheiro sem erro de arredondamento:** preços, subtotais e descontos com `BigDecimal`.
+- **Histórico que não muda:** o preço do produto fica gravado no item da venda; se o preço mudar depois, as vendas antigas continuam certas.
+- **Estoque sempre atualizado:** a venda finalizada baixa o estoque, e o sistema não deixa vender mais do que tem.
+- **Persistência simples:** ao sair pelo menu, tudo é salvo em `dados/*.csv` (`java.nio`).
 
-## 🧠 Engenharia e Decisões de Design
+## Contexto
 
-*   **Precisão Monetária:** Uso exclusivo da classe `BigDecimal` para manipular dinheiro, eliminando as clássicas falhas de arredondamento de variáveis como `double` ou `float`.
-*   **Persistência Inteligente:** Não requer banco de dados. Ao encerrar o sistema corretamente, os dados são salvos em arquivos `.csv` dentro de uma pasta `dados/` gerada automaticamente.
-*   **Imutabilidade Histórica:** O sistema congela o preço unitário do produto no momento da venda. Relatórios do passado não sofrem alterações caso um produto mude de preço no futuro.
+No caixa, rapidez e conta certa não podem falhar. O PDV Simples simula o "motor" de um caixa comercial direto no terminal, sem interface gráfica pesada: o operador cadastra produtos, monta o carrinho, aplica desconto e recebe o recibo, enquanto o estoque é atualizado na hora.
 
-## 🚀 Como Rodar o Sistema
+## Funcionalidades
 
-*(Este guia assume que você já tem o Java / JDK instalado no computador).*
+| Opção | O que faz |
+| :--- | :--- |
+| 1 | Cadastrar produto (código, nome, preço e estoque inicial) |
+| 2 | Listar produtos com estoque |
+| 3 | Adicionar item ao carrinho (barra se não houver estoque) |
+| 4 | Ver o carrinho com subtotais |
+| 5 | Finalizar a venda com desconto percentual e gerar o recibo |
+| 6 | Listar as vendas feitas |
+| 7 | Faturamento num período |
+| 8 | Produtos mais vendidos |
+| 0 | Salvar em `.csv` e sair |
 
-**PASSO 1: Preparar os Arquivos**
-Faça o clone deste repositório ou baixe o arquivo `.zip` e extraia no seu computador. Você terá uma pasta chamada `pdv-simples`.
+## Estrutura
 
-**PASSO 2: Abrir o Terminal na pasta src**
-Navegue até a pasta `pdv-simples` e entre na subpasta `src`.
-*   **No Windows:** Na barra de endereço do Explorador de Arquivos, digite `cmd` e aperte Enter. O terminal já abrirá na pasta certa.
-*   **No macOS / Linux:** Abra o Terminal e use o comando `cd` para navegar até a pasta src (ex: `cd Downloads/pdv-simples/src`).
-
-**PASSO 3: Compilar o Código**
-Com o terminal aberto DENTRO da pasta `src`, digite o comando abaixo:
-```bash
-javac -d ../out *.java
+```text
+src/
+├── Main.java          # menu e leitura do teclado
+├── PDV.java           # regras do caixa: carrinho, venda, estoque, relatórios
+├── Produto.java
+├── ItemVenda.java     # guarda o preço do momento da venda
+├── Venda.java         # itens, desconto, total e recibo
+└── ArquivoUtil.java   # leitura e gravação dos .csv
 ```
-Se não aparecer nenhuma mensagem, deu certo! Ele criou uma pasta `out` (um nível acima) com os arquivos prontos para rodar.
 
-**PASSO 4: Rodar a Aplicação**
-Ainda no terminal, navegue para a pasta compilada e inicie o sistema:
+## Como rodar
+
+Com o JDK 17 ou mais novo instalado:
+
 ```bash
+cd src
+javac -d ../out *.java
 cd ../out
 java Main
 ```
-O menu interativo do sistema aparecerá imediatamente na sua tela.
 
-## 🧪 Roteiro Prático de Testes
+## Roteiro de teste
 
-Para ver o motor do sistema funcionando na prática, siga a ordem abaixo digitando o número da opção no menu e apertando Enter:
+1. `1`: cadastre `P1`, Refrigerante 2L, 8.50, estoque 20.
+2. `1`: cadastre `P2`, Salgadinho, 6.00, estoque 30.
+3. `3`: adicione 2 unidades de `P1` ao carrinho.
+4. `3`: adicione 1 unidade de `P2`.
+5. `4`: veja o carrinho com os subtotais.
+6. `5`: finalize com 10% de desconto e veja o recibo (total R$ 20,70).
+7. `2`: confira que o estoque caiu para 18 e 29.
+8. `0`: salve e saia. **Sempre saia por aqui**: é essa opção que grava os arquivos `.csv`.
 
-1.  **Cadastrar Produto:** Digite `1` (Código: P1 | Nome: Refrigerante 2L | Preço: 8.50 | Estoque: 20)
-2.  **Cadastrar Outro Produto:** Digite `1` (Código: P2 | Nome: Salgadinho | Preço: 6.00 | Estoque: 30)
-3.  **Adicionar ao Carrinho:** Digite `3` (Código do produto: P1 | Quantidade: 2)
-4.  **Adicionar Mais um Item:** Digite `3` (Código do produto: P2 | Quantidade: 1)
-5.  **Ver Carrinho:** Digite `4` *(O sistema mostrará os 2 itens e o subtotal de cada um).*
-6.  **Finalizar Venda:** Digite `5` (Percentual de desconto: 10) *(O recibo completo aparecerá na tela, já com o desconto aplicado em BigDecimal).*
-7.  **Verificar Baixa de Estoque:** Digite `2` para Listar Produtos *(Repare que o estoque do P1 e P2 diminuiu automaticamente).*
-8.  **Salvar e Sair (MUITO IMPORTANTE):** Digite `0`
-> ⚠️ SEMPRE use essa opção para sair. É ela que cria a pasta `dados/` e salva os arquivos `.csv`. Se você fechar a janela do terminal no "X", perderá os dados.
-
-## ⚠️ Solução de Problemas (Troubleshooting)
-
-*   `javac: comando não encontrado`: O Java (JDK) não está instalado ou não está configurado nas variáveis de ambiente do seu sistema.
-*   `Error: Could not find or load main class Main`: Você está tentando rodar java Main na pasta errada. Confirme que está dentro da pasta `out` (e não dentro da `src`).
-*   **Mensagem "Estoque insuficiente" ao adicionar no carrinho:** Comportamento correto e proposital: o sistema barra vendas que ultrapassem o saldo físico. Cadastre mais quantidade ou peça um volume menor.
-*   **Mensagem "O carrinho está vazio" ao finalizar venda:** Você precisa usar a opção 3 para adicionar itens antes de tentar fechar o pedido no caixa.
+| Situação | O que fazer |
+| :--- | :--- |
+| `javac: comando não encontrado` | Instale o JDK e coloque-o no PATH. |
+| `Could not find or load main class Main` | Rode `java Main` dentro da pasta `out`, não da `src`. |
+| "Estoque insuficiente" | É proposital: o sistema não vende mais do que tem em estoque. |
+| "O carrinho está vazio" | Adicione itens com a opção 3 antes de finalizar. |
