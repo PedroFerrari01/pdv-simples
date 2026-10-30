@@ -69,3 +69,10 @@ java Main
 | `Could not find or load main class Main` | Rode `java Main` dentro da pasta `out`, não da `src`. |
 | "Estoque insuficiente" | É proposital: o sistema não vende mais do que tem em estoque. |
 | "O carrinho está vazio" | Adicione itens com a opção 3 antes de finalizar. |
+
+## Próximos passos
+
+- [ ] Testes automatizados (JUnit) para desconto, arredondamento e baixa de estoque
+- [ ] Maven e GitHub Actions para rodar os testes a cada envio
+- [ ] Guardar produtos e vendas no MySQL, em vez de arquivos `.csv`
+- [ ] Recibo em PDF e busca de produto por nome
