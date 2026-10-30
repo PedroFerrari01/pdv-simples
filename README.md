@@ -1,8 +1,6 @@
-# PDV Simples
+<img src="docs/banner.png" alt="PDV Simples: frente de caixa com desconto, recibo e baixa automática do estoque. Java, BigDecimal e CSV" width="100%">
 
 Frente de caixa que roda no terminal: cadastro de produtos, carrinho, desconto, recibo, baixa automática do estoque e relatórios de vendas. Feito em Java puro, sem banco de dados: os dados ficam em arquivos `.csv`.
-
-![Java](https://img.shields.io/badge/Java_17+-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
 
 <img src="docs/venda.png" alt="Uma venda completa no terminal: cadastro, carrinho, recibo com desconto e estoque atualizado" width="640">
 
